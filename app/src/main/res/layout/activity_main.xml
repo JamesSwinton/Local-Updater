@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  tools:context=".UpdaterActivity">
+
+  <LinearLayout
+    android:id="@+id/base_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:keepScreenOn="true"
+    android:weightSum="10">
+
+    <RelativeLayout
+      android:id="@+id/upgrade_container"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="5">
+
+      <ImageView
+        android:id="@+id/update"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:tint="@color/zebraGreen"
+        android:src="@drawable/ic_upgrade" />
+
+      <ImageView
+        android:id="@+id/emdkStatusIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/update"
+        android:layout_alignTop="@+id/update"
+        android:gravity="center_horizontal|top"
+        android:layout_marginTop="2dp"
+        android:layout_marginStart="2dp"
+        android:textColor="#000000"
+        tools:src="@drawable/ic_error"/>
+
+      <TextView
+        android:id="@+id/versionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/update"
+        android:layout_alignTop="@+id/update"
+        android:gravity="center_horizontal|top"
+        android:text="V1.00.00"
+        android:textSize="8pt"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:textColor="#000000" />
+
+      <TextView
+        android:id="@+id/updateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/update"
+        android:layout_alignTop="@+id/update"
+        android:layout_alignRight="@+id/update"
+        android:layout_alignBottom="@+id/update"
+        android:gravity="center_horizontal|top"
+        android:text="Update"
+        android:textSize="14pt"
+        android:textColor="#000000" />
+
+    </RelativeLayout>
+
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:background="#9E9E9E"/>
+
+    <RelativeLayout
+      android:id="@+id/downgrade_container"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="5">
+
+      <ImageView
+        android:id="@+id/downgrade"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:tint="@color/zebraBlue"
+        android:src="@drawable/ic_downgrade" />
+
+      <TextView
+        android:id="@+id/downgradeText"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_alignLeft="@+id/downgrade"
+        android:layout_alignTop="@+id/downgrade"
+        android:layout_alignRight="@+id/downgrade"
+        android:layout_alignBottom="@+id/downgrade"
+        android:gravity="center_horizontal|bottom"
+        android:text="Downgrade"
+        android:textSize="14pt"
+        android:textColor="#000000" />
+    </RelativeLayout>
+
+  </LinearLayout>
+</layout>
