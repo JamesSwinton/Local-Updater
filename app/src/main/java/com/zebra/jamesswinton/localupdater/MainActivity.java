@@ -166,8 +166,8 @@ public class MainActivity extends AppCompatActivity {
       public void onStart() {
         // Create Progress Dialog
         mUpdateProgressDialog = new AlertDialog.Builder(context)
-            .setTitle("Performing Update")
-            .setMessage("Starting Update...")
+            .setTitle("Performing Upgrade")
+            .setMessage("Starting Upgrade...")
             .setCancelable(false)
             .create();
 

@@ -60,7 +60,7 @@
         android:layout_alignRight="@+id/update"
         android:layout_alignBottom="@+id/update"
         android:gravity="center_horizontal|top"
-        android:text="Update"
+        android:text="Upgrade"
         android:textSize="14pt"
         android:textColor="#000000" />
 
