@@ -1,6 +1,6 @@
 package com.zebra.jamesswinton.localupdater.Interfaces;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import java.io.File;
 import java.util.List;
 

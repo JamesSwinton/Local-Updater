@@ -2,7 +2,7 @@ package com.zebra.jamesswinton.localupdater.AsyncUpdaters;
 
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import com.zebra.jamesswinton.localupdater.App;
 import com.zebra.jamesswinton.localupdater.Interfaces.UpdateProgressInterface;

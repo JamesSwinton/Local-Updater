@@ -2,7 +2,7 @@ package com.zebra.jamesswinton.localupdater.AsyncUpdaters;
 
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import com.symbol.emdk.EMDKResults;
 import com.symbol.emdk.ProfileManager;
