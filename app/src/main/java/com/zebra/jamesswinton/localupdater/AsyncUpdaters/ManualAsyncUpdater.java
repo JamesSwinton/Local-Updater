@@ -22,7 +22,7 @@ public class ManualAsyncUpdater extends AsyncTask<Void, String, Void> {
             .getAbsolutePath() + File.separator + "Test Directory";
     private static final String EXTERNAL_USB_DIRECTORY = File.separator + "storage" + File.separator;
     private static final String INTERAL_APP_DIRECTORY = Environment.getExternalStorageDirectory()
-            .getAbsolutePath() + File.separator + "Local Updater" + File.separator;
+            .getAbsolutePath() + File.separator + "USB Updater" + File.separator;
 
     // Non-static Variables
 

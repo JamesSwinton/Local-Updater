@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
   private static final String DOWNGRADE_INTENT_ACTION = "com.zebra.DOWNGRADE";
 
   private static final String INTERAL_APP_DIRECTORY = Environment.getExternalStorageDirectory()
-      .getAbsolutePath() + File.separator + "Local Updater" + File.separator;
+      .getAbsolutePath() + File.separator + "USB Updater" + File.separator;
 
   private static final Handler mHandler = new Handler(Looper.getMainLooper());
 
