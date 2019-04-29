@@ -4,8 +4,6 @@ import static com.zebra.jamesswinton.localupdater.App.UpdateType.UPGRADE;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -260,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
             }
             dialog.cancel();
           })
-          .setNegativeButton("COPY FROM USB", (dialog, which) -> dialog.dismiss())
+          .setNegativeButton("FIND MORE FILES ON USB", (dialog, which) -> dialog.dismiss())
           .setOnCancelListener(dialog -> startUpdateViaProfileManager(context))
           .setOnDismissListener(dialog -> invokeManualAsyncUpdater(context))
           .create();
@@ -297,6 +295,9 @@ public class MainActivity extends AppCompatActivity {
         mHandler.post(() -> {
           // Dismiss dialog
           mUpdateProgressDialog.dismiss();
+
+          // Get Packages from Directory
+          // List<File> localUpdatePackages = new ArrayList<>(Arrays.asList(new File(INTERAL_APP_DIRECTORY).listFiles()));
 
           // Extract names from List
           String[] localUpdatePackageNames = new String[localUpdatePackages.size()];
@@ -338,11 +339,13 @@ public class MainActivity extends AppCompatActivity {
   private static List<File> getUpdateFilesFromDevice() {
     File localDirectory = new File(INTERAL_APP_DIRECTORY);
     List<File> updatePackages = new ArrayList<>();
-    for (File file : localDirectory.listFiles()) {
-      // Check for .zip file
-      if (file.getName().endsWith(".zip")) {
-        // Store file
-        updatePackages.add(file);
+    if (localDirectory.exists()) {
+      for (File file : localDirectory.listFiles()) {
+        // Check for .zip file
+        if (file.getName().endsWith(".zip")) {
+          // Store file
+          updatePackages.add(file);
+        }
       }
     }
 
