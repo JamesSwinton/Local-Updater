@@ -8,6 +8,7 @@ import com.zebra.jamesswinton.localupdater.Interfaces.UpdateProgressInterface;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 
@@ -83,6 +84,7 @@ public class ManualAsyncUpdater extends AsyncTask<Void, String, Void> {
         }
 
         // Finish -> Return LocalUpdatePackages & Exit
+        mLocalUpdatePackages = new ArrayList<>(Arrays.asList(new File(INTERAL_APP_DIRECTORY).listFiles()));
         mCallback.onFinish(mLocalUpdatePackages);
         return null;
     }
