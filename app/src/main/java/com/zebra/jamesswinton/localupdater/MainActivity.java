@@ -240,34 +240,38 @@ public class MainActivity extends AppCompatActivity {
     List<File> updateFiles = getUpdateFilesFromDevice();
 
     if (updateFiles.size() > 0) {
-      // Extract names from List
-      String[] localUpdateFileNames = new String[updateFiles.size()];
-      for (int i = 0; i < updateFiles.size(); i++) {
-        localUpdateFileNames[i] = updateFiles.get(i).getName();
-      }
-
-      // Show new Dialog with Option to Select File
-      AlertDialog selectUpdatePackage = new AlertDialog.Builder(context)
-          .setTitle("Select Update Package")
-          .setSingleChoiceItems(localUpdateFileNames, -1, (dialog, item) -> {
-            // Store Chosen File
-            for (File updatePackage : updateFiles) {
-              if (updatePackage.getName().equals(localUpdateFileNames[item])) {
-                mLocalUpdatePackage = updatePackage;
-              }
-            }
-            dialog.cancel();
-          })
-          .setNegativeButton("FIND MORE FILES ON USB", (dialog, which) -> dialog.dismiss())
-          .setOnCancelListener(dialog -> startUpdateViaProfileManager(context))
-          .setOnDismissListener(dialog -> invokeManualAsyncUpdater(context))
-          .create();
-
-      // Show Dialog
-      selectUpdatePackage.show();
+      selectExistingUpdatePackage(context, updateFiles);
     } else {
       invokeManualAsyncUpdater(context);
     }
+  }
+
+  private static void selectExistingUpdatePackage(Context context, List<File> updateFiles) {
+    // Extract names from List
+    String[] localUpdateFileNames = new String[updateFiles.size()];
+    for (int i = 0; i < updateFiles.size(); i++) {
+      localUpdateFileNames[i] = updateFiles.get(i).getName();
+    }
+
+    // Show new Dialog with Option to Select File
+    AlertDialog selectUpdatePackage = new AlertDialog.Builder(context)
+        .setTitle("Select Update Package")
+        .setSingleChoiceItems(localUpdateFileNames, -1, (dialog, item) -> {
+          // Store Chosen File
+          for (File updatePackage : updateFiles) {
+            if (updatePackage.getName().equals(localUpdateFileNames[item])) {
+              mLocalUpdatePackage = updatePackage;
+            }
+          }
+          dialog.cancel();
+        })
+        .setNegativeButton("FIND MORE FILES ON USB", (dialog, which) -> dialog.dismiss())
+        .setOnCancelListener(dialog -> startUpdateViaProfileManager(context))
+        .setOnDismissListener(dialog -> invokeManualAsyncUpdater(context))
+        .create();
+
+    // Show Dialog
+    selectUpdatePackage.show();
   }
 
   private static void invokeManualAsyncUpdater(Context context) {
