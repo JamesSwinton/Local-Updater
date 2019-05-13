@@ -22,7 +22,7 @@ public class ManualAsyncUpdater extends AsyncTask<Void, String, Void> {
     private static final String TEST_DIRECTORY = Environment.getExternalStorageDirectory()
             .getAbsolutePath() + File.separator + "Test Directory";
     private static final String EXTERNAL_USB_DIRECTORY = File.separator + "storage" + File.separator;
-    private static final String INTERAL_APP_DIRECTORY = Environment.getExternalStorageDirectory()
+    private static final String INTERNAL_APP_DIRECTORY = Environment.getExternalStorageDirectory()
             .getAbsolutePath() + File.separator + "USB Updater" + File.separator;
 
     // Non-static Variables
@@ -84,7 +84,7 @@ public class ManualAsyncUpdater extends AsyncTask<Void, String, Void> {
         }
 
         // Finish -> Return LocalUpdatePackages & Exit
-        mLocalUpdatePackages = new ArrayList<>(Arrays.asList(new File(INTERAL_APP_DIRECTORY).listFiles()));
+        mLocalUpdatePackages = new ArrayList<>(Arrays.asList(new File(INTERNAL_APP_DIRECTORY).listFiles()));
         mCallback.onFinish(mLocalUpdatePackages);
         return null;
     }
@@ -194,7 +194,7 @@ public class ManualAsyncUpdater extends AsyncTask<Void, String, Void> {
 
     private static boolean copyAllUpdatePackagesToLocalStorage(List<File> usbUpdatePackages) {
         // Create Application Directory if Required
-        File internalApplicationDirectory = new File(INTERAL_APP_DIRECTORY);
+        File internalApplicationDirectory = new File(INTERNAL_APP_DIRECTORY);
         if (!internalApplicationDirectory.exists()) {
             if (internalApplicationDirectory.mkdirs()) {
                 // Notify Calling Class
@@ -217,7 +217,7 @@ public class ManualAsyncUpdater extends AsyncTask<Void, String, Void> {
                     + " to Local storage");
 
             // Create New File
-            File localUpdatePackage = new File(INTERAL_APP_DIRECTORY
+            File localUpdatePackage = new File(INTERNAL_APP_DIRECTORY
                     + File.separator + updatePackage.getName());
 
             // Attempt Copy (Repeat 5 times if unsuccessful)
