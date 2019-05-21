@@ -2,8 +2,10 @@ package com.zebra.jamesswinton.localupdater;
 
 import static com.zebra.jamesswinton.localupdater.App.UpdateType.UPGRADE;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -14,6 +16,7 @@ import android.os.Looper;
 import android.os.Bundle;
 import android.util.Log;
 
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
   private static final String TAG = "MainActivity";
 
   // Constants
+  private static final int ZIP_INTENT = 101;
   private static final int PERMISSION_ALL = 100;
   private static final String[] PERMISSIONS = {
       android.Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -54,7 +58,11 @@ public class MainActivity extends AppCompatActivity {
   private static final String UPDATE_INTENT_ACTION = "com.zebra.UPDATE";
   private static final String DOWNGRADE_INTENT_ACTION = "com.zebra.DOWNGRADE";
 
-  private static final String INTERAL_APP_DIRECTORY = Environment.getExternalStorageDirectory()
+  private static final String USB_DRIVE_REGEX = "(([A-Z0-9]{4})(-)([A-Z0-9]{4}))";
+  private static final String TEST_DIRECTORY = Environment.getExternalStorageDirectory()
+      .getAbsolutePath() + File.separator + "Test Directory";
+  private static final String EXTERNAL_USB_DIRECTORY = File.separator + "storage" + File.separator;
+  private static final String INTERNAL_APP_DIRECTORY = Environment.getExternalStorageDirectory()
       .getAbsolutePath() + File.separator + "USB Updater" + File.separator;
 
   private static final Handler mHandler = new Handler(Looper.getMainLooper());
@@ -254,6 +262,57 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Show new Dialog with Option to Select File
+    AlertDialog selectUpdatePackage;
+    if (getUpdateFilesFromUsb().isEmpty()) {
+      selectUpdatePackage = new AlertDialog.Builder(context)
+          .setTitle("Select Update Package")
+          .setSingleChoiceItems(localUpdateFileNames, -1, (dialog, item) -> {
+            // Store Chosen File
+            for (File updatePackage : updateFiles) {
+              if (updatePackage.getName().equals(localUpdateFileNames[item])) {
+                mLocalUpdatePackage = updatePackage;
+              }
+            }
+            dialog.cancel();
+          })
+          .setNeutralButton("COPY ALL FILES FROM USB",
+              (dialog, which) -> invokeManualAsyncUpdater(context))
+          .setOnCancelListener(dialog -> startUpdateViaProfileManager(context))
+          .create();
+    } else {
+      selectUpdatePackage = new AlertDialog.Builder(context)
+          .setTitle("Select Update Package")
+          .setSingleChoiceItems(localUpdateFileNames, -1, (dialog, item) -> {
+            // Store Chosen File
+            for (File updatePackage : updateFiles) {
+              if (updatePackage.getName().equals(localUpdateFileNames[item])) {
+                mLocalUpdatePackage = updatePackage;
+              }
+            }
+            dialog.cancel();
+          })
+          .setNeutralButton("COPY ALL FILES FROM USB",
+              (dialog, which) -> invokeManualAsyncUpdater(context))
+          .setNegativeButton("SELECT FILE FROM USB",
+              (dialog, which) -> selectFileFromUSB(context))
+          .setOnCancelListener(dialog -> startUpdateViaProfileManager(context))
+          .create();
+    }
+
+    // Show Dialog
+    selectUpdatePackage.show();
+  }
+
+  private static void selectFileFromUSB(Context context) {
+    List<File> updateFiles = getUpdateFilesFromUsb();
+
+    // Extract names from List
+    String[] localUpdateFileNames = new String[updateFiles.size()];
+    for (int i = 0; i < updateFiles.size(); i++) {
+      localUpdateFileNames[i] = updateFiles.get(i).getName();
+    }
+
+    // Show new Dialog with Option to Select File
     AlertDialog selectUpdatePackage = new AlertDialog.Builder(context)
         .setTitle("Select Update Package")
         .setSingleChoiceItems(localUpdateFileNames, -1, (dialog, item) -> {
@@ -265,13 +324,24 @@ public class MainActivity extends AppCompatActivity {
           }
           dialog.cancel();
         })
-        .setNegativeButton("FIND MORE FILES ON USB", (dialog, which) -> dialog.dismiss())
+        .setNeutralButton("COPY ALL FILES FROM USB", (dialog, which) -> invokeManualAsyncUpdater(context))
         .setOnCancelListener(dialog -> startUpdateViaProfileManager(context))
-        .setOnDismissListener(dialog -> invokeManualAsyncUpdater(context))
         .create();
 
     // Show Dialog
     selectUpdatePackage.show();
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (resultCode == Activity.RESULT_OK) {
+      if (requestCode == ZIP_INTENT) {
+        Log.i(TAG, "Result: " + data.getData().toString());
+      }
+    } else {
+      Log.e(TAG, "Invalid Result: " + resultCode);
+    }
   }
 
   private static void invokeManualAsyncUpdater(Context context) {
@@ -301,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
           mUpdateProgressDialog.dismiss();
 
           // Get Packages from Directory
-          // List<File> localUpdatePackages = new ArrayList<>(Arrays.asList(new File(INTERAL_APP_DIRECTORY).listFiles()));
+          // List<File> localUpdatePackages = new ArrayList<>(Arrays.asList(new File(INTERNAL_APP_DIRECTORY).listFiles()));
 
           // Extract names from List
           String[] localUpdatePackageNames = new String[localUpdatePackages.size()];
@@ -341,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private static List<File> getUpdateFilesFromDevice() {
-    File localDirectory = new File(INTERAL_APP_DIRECTORY);
+    File localDirectory = new File(INTERNAL_APP_DIRECTORY);
     List<File> updatePackages = new ArrayList<>();
     if (localDirectory.exists()) {
       for (File file : localDirectory.listFiles()) {
@@ -356,7 +426,31 @@ public class MainActivity extends AppCompatActivity {
     return updatePackages;
   }
 
+  private static List<File> getUpdateFilesFromUsb() {
+    File localDirectory = new File(App.DEBUGGING ? TEST_DIRECTORY : EXTERNAL_USB_DIRECTORY);
+    List<File> updatePackages = new ArrayList<>();
+    if (localDirectory.exists()) {
+      for (File subDirectory : localDirectory.listFiles()) {
+        if (subDirectory.getName().matches(USB_DRIVE_REGEX)) {
+          for (File updateFile : subDirectory.listFiles()) {
+            if (updateFile.getName().endsWith(".zip")) {
+              updatePackages.add(updateFile);
+            }
+          }
+        }
+      }
+    }
+    return updatePackages;
+  }
+
   private static void startUpdateViaProfileManager(Context context) {
+    // Check LocalUpdatePackage has bee set
+    if (mLocalUpdatePackage == null) {
+      Log.e(TAG, "Attempted to start updated by mLocalUpdatePackage was null");
+      Toast.makeText(context, "No Update Packaged Selected", Toast.LENGTH_SHORT).show();
+      return;
+    }
+
     // Build Profile
     String[] profile = new String[1];
     switch (mUpdateType) {
